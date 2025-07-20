@@ -1,0 +1,11 @@
+declare
+n emp.emp_id %type;
+name emp.emp_name %type;
+dept emp.dept_id %type;
+begin
+n:= '&emp_id';
+select emp_name into name
+from emp where  n=emp_id;
+dbms_output.put_line('emp is: '||name);
+end;
+/

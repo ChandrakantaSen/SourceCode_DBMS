@@ -1,0 +1,1 @@
+SELECT * FROM `chnd_nm` ORDER BY `first_name` DESC 

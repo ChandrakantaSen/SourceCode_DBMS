@@ -1,0 +1,11 @@
+select depot_master.regn, 
+       depot_master.depot_code,
+       depot_master.depot_name,
+       dealer_list.dealer_category,
+       count(dealer_list.dealer_category) "count_col"
+from depot_master,dealer_list
+where depot_master.depot_code = dealer_list.depot_code
+group by depot_master.regn,
+       depot_master.depot_code,
+       depot_master.depot_name,
+       dealer_list.dealer_category;

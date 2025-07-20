@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="WINDOWS-1252" ?>
+<report name="RPT_SM1" DTDVersion="9.0.2.0.10">
+  <xmlSettings xmlTag="RPT_SM" xmlPrologType="text">
+  <![CDATA[<?xml version="1.0" encoding="&Encoding"?>]]>
+  </xmlSettings>
+  <data>
+    <dataSource name="Q_1">
+      <select canParse="no">
+      <![CDATA[SELECT
+CUST_DTLS.REGION        REGION,
+CUST_DTLS.DEPO_NAME     DEPO_NAME,
+CUST_DTLS.TERR_CODE     TERR_CODE,
+CUST_DTLS.CUST_ACC_NO   CUST_ACC_NO,
+CUST_DTLS.BILL_ID       BILL_TO,
+CUST_DTLS.CUST_NAME     CUST_NAME,
+VOL_DTLS.TRX_NUMBER     TRX_NUMBER,
+SUM(VOL_DTLS.FNL_VOL)        FNL_VOL
+FROM
+(SELECT 
+    SUBSTR(HAOU.ATTRIBUTE4,1,2) REGION, 
+    SUBSTR(HAOU.NAME,5,LENGTH(HAOU.NAME)) DEPO_NAME,
+    TO_NUMBER(RT.SEGMENT4)     TERR_CODE,
+    HCA.ACCOUNT_NUMBER  CUST_ACC_NO,
+    HCSUA.SITE_USE_ID    BILL_ID,
+    HCA.ACCOUNT_NAME     CUST_NAME
+FROM
+AR.HZ_CUST_ACCOUNTS                    HCA,
+         AR.HZ_CUST_ACCT_SITES_ALL     HCASA,
+         AR.HZ_CUST_SITE_USES_ALL      HCSUA,
+         HR.HR_ALL_ORGANIZATION_UNITS  HAOU,
+         AR.RA_TERRITORIES             RT
+WHERE
+         HCA.CUST_ACCOUNT_ID=HCASA.CUST_ACCOUNT_ID
+         AND  HCASA.CUST_ACCT_SITE_ID=HCSUA.CUST_ACCT_SITE_ID
+         AND  HCSUA.WAREHOUSE_ID=HAOU.ORGANIZATION_ID
+         AND  HCSUA.TERRITORY_ID=RT.TERRITORY_ID
+         AND  HCSUA.SITE_USE_CODE='BILL_TO'
+         AND  HAOU.ATTRIBUTE1='DEPOT'
+         AND  SUBSTR(HAOU.ATTRIBUTE4,1,2) LIKE 'C1') CUST_DTLS,
+(SELECT   RCTLA.INVENTORY_ITEM_ID         INV_ID, 
+         RCTA.TRX_NUMBER                 TRX_NUMBER,
+         RCTA.TRX_DATE                   TRX_DATE,
+         RCTA.BILL_TO_SITE_USE_ID        BILL_ID,
+         RCTLA.DESCRIPTION               DESCRIPTION1,
+         MSIB.SEGMENT1             SKU,
+         CASE
+                     WHEN SUBSTR(RCTLA.DESCRIPTION,6,15) = 'MANUAL_DISCOUNT' THEN 0
+                     ELSE
+                         CASE
+                           WHEN (MSIB.SECONDARY_UOM_CODE = 'L' 
+                             OR  MSIB.SECONDARY_UOM_CODE = 'ML') 
+                            AND  RCTTA.TYPE = 'CM' 
+                           THEN  MSIB.PACK_SIZE * NVL(RCTLA.QUANTITY_CREDITED,0)
+                           WHEN (MSIB.SECONDARY_UOM_CODE <> 'L' 
+                            AND  MSIB.SECONDARY_UOM_CODE <> 'ML') 
+                            AND  RCTTA.TYPE = 'CM' 
+                           THEN (MSIB.PACK_SIZE * NVL(RCTLA.QUANTITY_CREDITED,0))/2.8
+                           WHEN (MSIB.SECONDARY_UOM_CODE = 'L' 
+                             OR  MSIB.SECONDARY_UOM_CODE = 'ML') 
+                            AND  RCTTA.TYPE <> 'CM' 
+                           THEN  MSIB.PACK_SIZE * NVL(RCTLA.QUANTITY_INVOICED,0)
+                           WHEN (MSIB.SECONDARY_UOM_CODE <> 'L' 
+                            AND  MSIB.SECONDARY_UOM_CODE <> 'ML') 
+                            AND  RCTTA.TYPE <> 'CM' 
+                           THEN (MSIB.PACK_SIZE * NVL(RCTLA.QUANTITY_INVOICED,0))/2.8
+                         END
+                  END FNL_VOL
+FROM
+        AR.RA_CUSTOMER_TRX_LINES_ALL    RCTLA,
+         AR.RA_CUSTOMER_TRX_ALL          RCTA,
+         AR.RA_CUST_TRX_TYPES_ALL        RCTTA,
+         (
+            SELECT MSIB.INVENTORY_ITEM_ID
+                  ,MSIB.SEGMENT1
+                  ,MSIB.SECONDARY_UOM_CODE  
+                  ,UPPER(NVL(BPM.PRD_GRP,'NA')) PRD_GRP 
+                  ,UPPER(NVL(BPM.PRD_CAT,'NA')) PRD_CAT 
+                  ,NVL(BPIL.BPIL_INVOICE_UOM (MSIB.INVENTORY_ITEM_ID,MSIB.SECONDARY_UOM_CODE),0) PACK_SIZE
+                  ,MSIB.DESCRIPTION
+              FROM INV.MTL_SYSTEM_ITEMS_B     MSIB
+                  ,BPIL.BPIL_PRD_MSTR_MCC BPM
+             WHERE MSIB.ORGANIZATION_ID = 102
+               AND MSIB.SEGMENT1 NOT LIKE '%BULK%'
+               AND MSIB.INVENTORY_ITEM_STATUS_CODE = 'Active'
+               AND SUBSTR(MSIB.SEGMENT1,1,6) = BPM.PRD_CODE(+)
+               AND SUBSTR(MSIB.SEGMENT1,1,6) IN ('F00017','F00034')
+          ) MSIB
+WHERE    RCTA.CUSTOMER_TRX_ID=RCTLA.CUSTOMER_TRX_ID
+         AND RCTA.CUST_TRX_TYPE_ID=RCTTA.CUST_TRX_TYPE_ID
+         AND MSIB.INVENTORY_ITEM_ID=RCTLA.INVENTORY_ITEM_ID
+         AND RCTLA.DESCRIPTION NOT LIKE '%B99%'
+       AND TO_NUMBER(TO_CHAR(RCTA.TRX_DATE,'YYYYMM')) = 201403
+       AND TO_NUMBER(TO_CHAR(RCTA.TRX_DATE,'DD')) <= 15) VOL_DTLS
+WHERE CUST_DTLS.BILL_ID=VOL_DTLS.BILL_ID
+GROUP BY
+CUST_DTLS.REGION,
+CUST_DTLS.DEPO_NAME,
+CUST_DTLS.TERR_CODE,
+CUST_DTLS.CUST_ACC_NO,
+CUST_DTLS.BILL_ID,
+CUST_DTLS.CUST_NAME,
+VOL_DTLS.TRX_NUMBER
+ORDER BY 1,2,3,4,5,6,7;   
+]]>
+      </select>
+      <displayInfo x="0.91663" y="1.04163" width="0.69995" height="0.19995"/>
+      <group name="G_REGION">
+        <displayInfo x="0.54553" y="1.74158" width="1.44214" height="2.48145"
+        />
+        <dataItem name="REGION" datatype="vchar2" columnOrder="11" width="8"
+         defaultWidth="80000" defaultHeight="10000" columnFlags="1"
+         defaultLabel="Region">
+          <dataDescriptor expression="REGION" descriptiveExpression="REGION"
+           order="1" width="8"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="DEPO_NAME" datatype="vchar2" columnOrder="12"
+         width="944" defaultWidth="100000" defaultHeight="10000"
+         columnFlags="1" defaultLabel="Depo Name">
+          <dataDescriptor expression="DEPO_NAME"
+           descriptiveExpression="DEPO_NAME" order="2" width="944"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="TERR_CODE" oracleDatatype="number" columnOrder="13"
+         width="22" defaultWidth="90000" defaultHeight="10000" columnFlags="1"
+         defaultLabel="Terr Code">
+          <dataDescriptor expression="TERR_CODE"
+           descriptiveExpression="TERR_CODE" order="3" width="22"
+           precision="38"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="CUST_ACC_NO" datatype="vchar2" columnOrder="14"
+         width="30" defaultWidth="100000" defaultHeight="10000"
+         columnFlags="1" defaultLabel="Cust Acc No">
+          <dataDescriptor expression="CUST_ACC_NO"
+           descriptiveExpression="CUST_ACC_NO" order="4" width="30"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="BILL_TO" oracleDatatype="number" columnOrder="15"
+         width="22" defaultWidth="90000" defaultHeight="10000" columnFlags="1"
+         defaultLabel="Bill To">
+          <dataDescriptor expression="BILL_TO" descriptiveExpression="BILL_TO"
+           order="5" width="22" precision="15"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="CUST_NAME" datatype="vchar2" columnOrder="16"
+         width="240" defaultWidth="100000" defaultHeight="10000"
+         columnFlags="1" defaultLabel="Cust Name">
+          <dataDescriptor expression="CUST_NAME"
+           descriptiveExpression="CUST_NAME" order="6" width="240"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="TRX_NUMBER" datatype="vchar2" columnOrder="17"
+         width="20" defaultWidth="100000" defaultHeight="10000"
+         columnFlags="1" defaultLabel="Trx Number">
+          <dataDescriptor expression="TRX_NUMBER"
+           descriptiveExpression="TRX_NUMBER" order="7" width="20"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <dataItem name="FNL_VOL" oracleDatatype="number" columnOrder="18"
+         width="22" defaultWidth="90000" defaultHeight="10000" columnFlags="1"
+         defaultLabel="Fnl Vol">
+          <dataDescriptor expression="FNL_VOL" descriptiveExpression="FNL_VOL"
+           order="8" width="22" precision="38"/>
+          <dataItemPrivate adtName="" schemaName=""/>
+        </dataItem>
+        <formula name="CF_1" source="cf_1formula" datatype="number" width="20"
+         precision="10" defaultWidth="0" defaultHeight="0" columnFlags="16"
+         breakOrder="none">
+          <displayInfo x="0.00000" y="0.00000" width="0.00000"
+           height="0.00000"/>
+        </formula>
+        <placeholder name="TGT" datatype="number" width="20" precision="10"
+         defaultWidth="0" defaultHeight="0" columnFlags="16">
+          <displayInfo x="0.00000" y="0.00000" width="0.00000"
+           height="0.00000"/>
+        </placeholder>
+        <placeholder name="KETTLE" datatype="number" width="20" precision="10"
+         defaultWidth="0" defaultHeight="0" columnFlags="16">
+          <displayInfo x="0.00000" y="0.00000" width="0.00000"
+           height="0.00000"/>
+        </placeholder>
+        <placeholder name="SO" datatype="character" width="20" precision="10"
+         defaultWidth="0" defaultHeight="0" columnFlags="16">
+          <displayInfo x="0.00000" y="0.00000" width="0.00000"
+           height="0.00000"/>
+        </placeholder>
+      </group>
+    </dataSource>
+  </data>
+  <layout>
+  <section name="main">
+    <body>
+      <repeatingFrame name="R_1" source="G_REGION" printDirection="down"
+       minWidowRecords="1" columnMode="no">
+        <geometryInfo x="0.06250" y="0.31250" width="7.37500" height="0.50000"
+        />
+        <advancedLayout formatTrigger="r_1formattrigger"/>
+        <visualSettings linePattern="solid"/>
+        <field name="F_1" source="REGION" minWidowLines="1" spacing="single"
+         alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="0.06250" y="0.37500" width="0.62500"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_2" source="DEPO_NAME" minWidowLines="1"
+         spacing="single" alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="0.81250" y="0.37500" width="0.68750"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_3" source="CUST_ACC_NO" minWidowLines="1"
+         spacing="single" alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="1.62500" y="0.37500" width="0.81250"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_4" source="CUST_NAME" minWidowLines="1"
+         spacing="single" alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="2.50000" y="0.37500" width="1.62500"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_5" source="BILL_TO" minWidowLines="1" spacing="single"
+         alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="4.18750" y="0.37500" width="0.81250"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_6" source="FNL_VOL" minWidowLines="1" spacing="single"
+         alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="5.12500" y="0.37500" width="0.75000"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_7" source="KETTLE" minWidowLines="1" spacing="single"
+         alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="6.00000" y="0.37500" width="0.50000"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+        <field name="F_8" source="SO" minWidowLines="1" spacing="single"
+         alignment="start">
+          <font face="Courier New" size="10"/>
+          <geometryInfo x="6.56250" y="0.37500" width="0.43750"
+           height="0.18750"/>
+          <visualSettings linePattern="solid"/>
+        </field>
+      </repeatingFrame>
+    </body>
+  </section>
+  </layout>
+  <programUnits>
+    <function name="cf_1formula" returnType="number">
+      <textSource>
+      <![CDATA[function CF_1Formula return Number is
+begin
+  :TGT := 52;
+  :KETTLE :=TRUNC(:FNL_VOL/52);
+  IF :KETTLE>=1
+  	THEN
+  	  :SO:='Q';
+  ELSE
+  	 :SO:='NQ';
+  END IF;
+  RETURN 0;
+end;]]>
+      </textSource>
+    </function>
+    <function name="r_1formattrigger">
+      <textSource>
+      <![CDATA[function R_1FormatTrigger return boolean is
+begin
+  return (TRUE);
+end;]]>
+      </textSource>
+    </function>
+  </programUnits>
+  <webSource>
+  <![CDATA[<%@ taglib uri="/WEB-INF/lib/reports_tld.jar" prefix="rw" %> 
+<%@ page language="java" import="java.io.*" errorPage="/rwerror.jsp" session="false" %>
+<%@ page contentType="text/html;charset=ISO-8859-1" %>
+<!--
+<rw:report id="report"> 
+<rw:objects id="objects">
+</rw:objects>
+-->
+
+<html>
+
+<head>
+<meta name="GENERATOR" content="Oracle 9i Reports Developer"/>
+<title> Your Title </title>
+
+<rw:style id="yourStyle">
+   <!-- Report Wizard inserts style link clause here -->
+</rw:style>
+
+</head>
+
+
+<body>
+
+<rw:dataArea id="yourDataArea">
+   <!-- Report Wizard inserts the default jsp here -->
+</rw:dataArea>
+
+
+
+</body>
+</html>
+
+<!--
+</rw:report> 
+-->
+]]>
+  </webSource>
+  <reportPrivate versionFlags2="0" templateName="rwbeige"/>
+</report>

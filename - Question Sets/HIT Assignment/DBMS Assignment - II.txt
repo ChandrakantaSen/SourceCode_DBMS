@@ -1,0 +1,291 @@
+HALDIA INSTITUTE OF TECHNOLOGY
+1st Year, 2nd  Semester,
+MCA
+Department of Computer Applications
+
+
+Description of the table EMP:
+
+ Name                                              Null?    		Type
+ ----------------------------------------------------- ------------------------------
+ EMPNO                                         NOT NULL 	NUMBER(4)
+ ENAME                                                          	VARCHAR2(10)
+ JOB                                                            		VARCHAR2(9)
+ MGR                                                            		NUMBER(4)
+ HIREDATE                                                       	DATE
+ SAL                                                            		NUMBER(7,2)
+ COMM                                                           	NUMBER(7,2)
+ DEPTNO                                                         	NUMBER(2)
+
+Description of the table DEPT:
+
+Name                                               Null?    		Type
+ ----------------------------------------------------- -------------------------------
+ DEPTNO                                       NOT NULL 	NUMBER(2)
+ DNAME                                                          	VARCHAR2(14)
+ LOC                                                            		VARCHAR2(13)
+
+Description of the table SALGRADE:
+
+ Name                                              	Null?    	Type
+ ----------------------------------------------------- -------- -------------------
+ GRADE                                                          	NUMBER
+ LOSAL                                                          	NUMBER
+ HISAL                                                          		NUMBER
+
+
+Description of the table BONUS:
+
+Name                                               	Null?    	Type
+ ----------------------------------------------------- -------- ------------------------
+ ENAME                                                          	VARCHAR2(10)
+ JOB                                                            		VARCHAR2(9)
+ SAL                                                            		NUMBER
+ COMM                                                           	NUMBER
+
+
+
+Experiment No. – 01
+
+Using the default table of Oracle  given  above.
+
+Write SQL queries for the following :
+
+(a)	List the names and code of all employees.
+(b)	List the names, employee code and department code of all clerks.
+(c)	List the names, employee code and salary of all managers.
+(d)	List the names, employee code and hiredate of all analysts.
+(e)	List the employees whose salary lies between 2000 and 3000.
+(f)	List the employees whose salary less than 1000.
+(g)	List the employees whose salary greater than 4000.
+(h)	List the employees whose salaries are 800, 1600 or 2450.
+(i)	List the names of all employees who are either clerks or salesman or analyst .
+(j)	List the employee those who are not getting commission.
+(k)	List the employee those who are getting commission.
+(l)	List the employee name starts with ‘F’.
+
+
+Experiment No. – 02 
+
+Write SQL queries for the following.
+
+(a)	List the names and job of all employees who have names exactly 5 characters in length.
+(b)	List all employees whose names start with ‘G’ .
+(c)	List all employees who name ends with  ‘N’.
+(d)	List the names and job of all employees who have names exactly 5 characters in length and ends with ‘S’.
+(e)	List all employees who have not joined between 1/1/81 and 31/12/81.
+(f)	List all employees whose job does not start will “CL”.
+(g)	List all managers who earn more than Rs. 4000/-.
+(h)	List all clerks and salesman who earn more than Rs. 1600/-
+(i)	List the names and salaries of all employees who were joined as manager during 1981.
+
+Experiment No. – 03 
+
+For the EMP relation, frame the following queries using SQL.
+
+(a)	Calculate the average salary of all employees.
+(b)	Calculate the average salary of all Managers.
+(c)	Calculate the total salary of all employees.
+(d)	Calculate the total  salary of all managers.
+(e)	Find the minimum salaries earned by the employees. 
+(f)	Find the maximum salaries earned by the employees. 
+(g)	Find the minimum salaries earned by a clerks.
+(h)	Find the maximum salaries earned by a salesman.
+(i)	Find the minimum and maximum and average salaries earned by a employees.
+(j)	Find the minimum and maximum and average salaries earned by a clerks.
+(k)	List the total number of employees and the average salaries of the different departments.
+(l)	Calculate total number of employees.
+(m)	Calculate total number of managers.
+(n)	Calculate the number of employees who are not getting any commission.
+(o)	Calculate the number of employees who are getting any commission.
+(p)	List the details of all managers in ascending order of joining dates.
+(q)	List the average salaries for each different job.
+(r)	Display the average salary for each different job.
+(s)	Display the minimum, maximum, and average salaries for each job group.
+(t)	Find all departments which have less than 3 employees.
+(u)	List the details of the employees in ascending order of department number, and within each department, in descending order of salary.
+(v)	Display the name, deptno and annual salary of each employee in order salary and deptno.
+(w)	Display the name of employee who earns maximum salary.
+(x)	Display the name of employee who earns minimum salary.
+(y)	Display the name of employee who earns maximum salary whose  job is salesman.
+(z)	Display the name of employee who earns minimum salary whose  job is clerk.
+(aa)	Display the department number whose average salary is maximum.
+
+Experiment No. – 04 
+
+Using the default table of Oracle, such as Emp and Dept.
+
+Write SQL queries for the following ?
+
+(a)	List all employee names, dept name and the city, in department name order.
+(b)	List all employee name, dept number, dept name and salary.
+(c)	List all employees working in Dallas in descending order of salary.
+(d)	List all employee’s name, job, salary and department name for everyone in the company except clerks. Sort the report with respect to job and salary.
+(e)	List all employee names who work in the same city as an employee named ‘FORD’.
+(f)	Display the name of the dept that has no employee.
+
+
+
+
+
+
+
+
+Experiment No. – 05
+
+a)	List the employees belonging to the department 20.
+b)	List the name and salary of the employees whose salary is more than 1000.
+c)	List the employee number and the name of the manager.
+d)	List the names of the clerks working in the department 20.
+e)	List the name of the analysts and salesman.
+f)	List the details of the employees who have joined before the end of September 81.
+g)	List the names of the employees ho are not managers.
+h)	List the name of the employees whose employee numbers 7369,7521,7839,7934,7788.
+i)	List the employee details not belonging to the department 10,30 and 40.
+j)	List the employee names who have joined before 30th June’81 and after December ’81.
+k)	List the name of the employee and designation (job) of the employee who does not report to anybody (who doesn’t have manager).
+l)	List the different jobs (designations) available in the emp table.
+m)	List the employees not assigned to any department.
+n)	List the details of the employees whose salary is greater than 2000 and not eligible for commission.
+o)	List the employee names having ‘I’ as the second character.
+p)	List the name, salary and PF amount of all the employees (PF is calculated as 10% of salary).
+q)	List the employee number, name and salary in ascending order of salary.
+r)	Lists the employee name and hiredate in descending order of hiredate.
+s)	List the employee name, salary, PF, HRA, DA and gross salary;order the result in ascending order of gross.HRA is 50% of salary and DA is 30% of salary.
+t)	List the department number and the total salary payable in each department. List the jobs and number of employees in each job.The result should be in descending order of the number of employees.
+u)	List the total salary, maximum, minimum and average salary of the employee’s job wise.
+v)	List the average salary from each job excluding manager.
+w)	List the average monthly salary for each job type within department.
+x)	List average salary for all departments employing more than five people.
+y)	List job of all the employees where maximum salary is greater than or equal to 3000.
+z)	List the total salary, maximum and minimum salary and the average salary of employees job wise for department number 20 and display only those rows having average salary greater than 1000.
+
+
+
+
+
+
+
+Experiment No. – 06
+
+a)	List the employees earns more than any employee in CHICAGO.
+b)	List the name of the  employee who works in the same department as SMITH.
+c)	List the name, employee number ,their manager name and manager number.
+d)	List the name of the employee  job is same as  ‘CLARK’.
+e)	List the name of employee whose salary is more than ‘TURNER’.
+f)	List the name of employee who joined after ‘ALLEN’.
+g)	Display the name of the department whose job is ‘SALESMAN’.
+h)	Display the name of the department in which ‘FORD’ works.
+i)	Display the name of the department whose salary is maximum.
+j)	Display the name of the city(location) in which ‘SMITH’ works.
+k)	Display the name of the city in which the manager works.
+l)	Display the grade of the employee named ‘MARTIN’.
+m)	List the employees earns more than every employee in  ‘DALLAS’.
+n)	Display the name of the department which has no employee.
+o)	 List name, employee number and the name, employee number of their  managers’ manager .
+p)	list the name of the employee who joined in the same year of  ‘ADAMS’.
+q)	list the name of the employee who joined in the same month of  ‘BLAKE’.
+r)	list the name of the employee who joined in the same date of  ‘ADAMS’.
+s) List the name of the department who gets commission.
+
+
+Experiment No. – 07
+
+Write  SQL queries for the following :
+
+(a)	List all employee who work in Dallas or have joined the company as manager before 82.
+(b)	List all employees who work in Boston and earn more than any employee working in Chicago.
+(c)	List name of the employee who earns the minimum salary.
+(d)	List all employees who work in the same post as Smith.
+(e)	List all employees who earn the lowest salary in their respective dept.
+(f)	List all employees who earn more than every employee in the ‘Sales’ department.
+(g)	Find the job with the highest average salary.
+
+
+Experiment No. – 08
+
+(a)	Create a Account table with following attribute 
+Acc_no(4), Acc_type(1), Cust_no1(6), Cust_no2(6), Opp_date.
+(b)	Create the same table using Not Null on all and Default on Opp_date constraint.
+(c)	Add  a field called Balance(7,2) to the table Account.
+(d)	Increase the field of Acc_no to 6.
+(e)	Remove the constraint of Cust_no2.
+(f)	Disable the constraint of Acc_type.
+(g)	Remove the table from the database.
+
+1.	Create a table called CRICKTERS, with columns as specified below:
+
+Column  Name				Description
+Country					Character string
+Name					Character string (max length 20)
+Runs					Number
+Wickets					number
+Catches					number
+Date-of-birth 				date
+
+The country and name fields should be declared NOT NULL.
+
+2.	Modify the table CRICKETERS to
+
+a)	Add a field centuries, which will hold the number of centuries scored.
+b)	Add a field five’s, which will hold the number at times he has taken five wickets in an innings.
+c)	A Boolean field caption, indicating whether the person is currently the caption of the team.
+
+Use the DESC command to check the column defines.
+
+
+a)	Create a Transaction table with the following attribute :
+Acc_no(4), T_date(date), T_type(1), T_mode(6), Cheque_no(7), Operator(20), Drawn_bank(30), T_amount(7,2), Clear(1).
+
+•	T_date should be Sysdate.
+•	T_type will be Deposit or Withdraw.
+•	T_mode will be Cheque or Cash.
+•	Clear will be Yes or No.
+•	Maintain the relationship with Account table.
+
+b)	Insert some appropriate data in these tables.
+
+
+
+
+
+
+Experiment No. – 9
+
+Using the default table of Oracle, such as Emp and Dept.
+a)	Define a view according to the following output :
+
+Deptno	NaxSal	MinSal	No. of emp
+10	5000	1400	3
+20	3000	800	5
+30	2850	950	6
+
+b)	From the transaction table define a view of all deposits done in last 2 months.
+
+
+Experiment No. – 10
+
+1>	Write a PL/SQL block which will accept two values, one for lower range and one for upper range from the user and it will insert the factorial results within a given range into a table called Result.
+2>	Write a block which will accept an empno and check his salary, if it is less then 2000 then increment it by 20% of the salary.
+
+Experiment No. – 11
+
+1.	Write a PL/SQL block of code for inverting any number given by user.
+
+2.	The HRD manager has decided to raise the salary of employee by 0.15. Write a PL/SQL block with implicit cursors to accept the employee number and update the salary of the employee. Display appropriate message based on the existence of the record in the employee table.
+
+ 
+Experiment No. – 12
+
+Create a row trigger which will execute after updation or deletion of client_master in such a way that it will insert the old client_number, old_balance, operation and system date into new table audit.
+Table to be created as follows:
+Client_master(client_no varchar2(6), name varchar2(20), balance_due number(10,2))
+audit(client_no varchar2(6), balance number(10,2), operation varchar2(6), sysdate date)
+
+Experiment No. – 13
+Create a row trigger (before trigger) in such a way whenever the dispatched quantity in challan_details is inserted as zero or negative the trigger fires by giving message ‘despatch quantity can not be less than equal to zero’. If it is +ve then the trigger will execute to update the order table by updating the balance quantity.
+Table to created as follows :
+Order(order_no varchar2(6) primary key, balance_quantity number(10,2))
+Chall_dtls(order_no varchar2(6), prod_no varchar2(6), qnty_desp number(10,2) primary key(order_no, prod_no), foreign key (order_no) references order)
+
+

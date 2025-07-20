@@ -1,0 +1,14 @@
+declare
+cursor mycursor is 
+select * from emp;
+emp_rec emp %rowtype;
+begin
+open mycursor;
+loop
+fetch mycursor into emp_rec;
+exit when mycursor %notfound;
+dbms_output.put_line (emp_rec.emp_id||'   '||emp_rec.emp_name);
+end loop;
+close mycursor;
+end;
+/

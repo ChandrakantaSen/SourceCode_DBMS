@@ -1,0 +1,19 @@
+declare
+i number;
+n number;
+em varchar2(10);
+en varchar2(20);
+di varchar2(30);
+b number;
+w number;
+begin
+n:=&terms;
+for i in 1..n
+loop
+select emp_id,emp_name,dept_id,basic_sal,workload into em,en,di,b,w from emp where dept_id=10;
+dbms_output.put_ne(em||en||i||b||w);
+end loop;
+end;
+
+
+/

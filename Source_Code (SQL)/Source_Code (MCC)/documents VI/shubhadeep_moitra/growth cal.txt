@@ -1,0 +1,4 @@
+CASE WHEN :CS_LY	<=	0	AND :CS_TY	<=	0	THEN 0
+	 WHEN :CS_LY	<=  0	AND	:CS_TY	>	0	THEN 100
+	 ELSE ((:CS_TY	-	:CS_LY)/:CS_LY)*100
+END;

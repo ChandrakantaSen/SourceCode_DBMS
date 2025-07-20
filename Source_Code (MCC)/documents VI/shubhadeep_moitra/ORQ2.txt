@@ -1,0 +1,49 @@
+SELECT DEPOT.REGN
+      ,DEPOT.DEPO_NAME
+      ,MSIB.SKU
+      ,MSIB.DESCRIPTION
+      ,MSIB.UOM
+      ,MSIB.PACK_SIZE
+      ,BS.OPSTK_QTY
+      ,BS.SLS_QTY
+      ,BS.CLSTK_QTY
+      ,CASE
+         WHEN BS.SYSTEM_CLASS = 'A' THEN 'FAST MOVING'
+         WHEN BS.SYSTEM_CLASS = 'B' THEN 'SLOW MOVING'
+         WHEN BS.SYSTEM_CLASS = 'C' THEN 'NON MOVING'
+         ELSE ''
+       END CLASS
+  FROM BPIL.BPILMCC_SKUCLASS BS
+      ,(
+        SELECT SUBSTR(ATTRIBUTE4,1,2) REGN
+              ,SUBSTR(NAME,1,3)       DEPO_CODE
+              ,NAME                   DEPO_NAME
+              ,ORGANIZATION_ID
+          FROM APPS.HR_ALL_ORGANIZATION_UNITS
+         WHERE ATTRIBUTE1 = 'DEPOT'
+           AND SUBSTR(NAME,1,3) = :RPT_DEPO
+       ) DEPOT
+      ,(
+        SELECT MSIB.INVENTORY_ITEM_ID           
+              ,MSIB.SEGMENT1           SKU
+              ,MSIB.DESCRIPTION               
+              ,MSIB.SECONDARY_UOM_CODE UOM
+              ,BPIL.BPIL_INVOICE_UOM(MSIB.INVENTORY_ITEM_ID,MSIB.SECONDARY_UOM_CODE) PACK_SIZE
+              ,MSIB.ORGANIZATION_ID
+          FROM APPS.MTL_SYSTEM_ITEMS_B MSIB
+              ,(  
+                  SELECT INVENTORY_ITEM_ID,
+                         CATEGORY_CONCAT_SEGS
+                    FROM APPS.MTL_ITEM_CATEGORIES_V
+                   WHERE ORGANIZATION_ID      = 83
+                     AND CATEGORY_SET_NAME    = 'GL Product Line'     
+                     AND CATEGORY_CONCAT_SEGS = 'RETAIL'
+               )RTL_SKU
+         WHERE MSIB.ORGANIZATION_ID = 83
+           AND MSIB.SEGMENT1 LIKE 'F00%'
+           AND MSIB.INVENTORY_ITEM_STATUS_CODE = 'Active'
+           AND MSIB.SEGMENT1 NOT LIKE '%BULK%'
+           AND MSIB.INVENTORY_ITEM_ID = RTL_SKU.INVENTORY_ITEM_ID
+        ) MSIB
+ WHERE BS.DEPOT_CODE        = DEPOT.DEPO_CODE
+   AND BS.INVENTORY_ITEM_ID = MSIB.INVENTORY_ITEM_ID  
